@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>308 Measurement Conversions</title>
+  <!-- Link to external CSS file -->
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Inline critical CSS for immediate rendering */
+    body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #5170FF, #FF66C4);
+      font-family: 'Roboto', 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #game-container {
+      width: 800px;
+      max-width: 100%;
+      height: 600px;
+      margin: 20px auto;
+      border: none;
+      border-radius: 16px;
+      background-color: rgba(255, 255, 255, 0.9);
+      position: relative;
+      overflow: hidden;
+      padding: 20px;
+      box-sizing: border-box;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+    #title-screen, #question-screen, #final-screen {
+      display: none;
+      width: 100%;
+      height: 100%;
+    }
+    .active {
+      display: block !important;
+    }
+  </style>
+</head>
+<body>
+  <div id="game-container">
+    <!-- Title/Welcome Screen (Default) -->
+    <div id="title-screen" class="active">
+      <h1>308 Measurement Conversions</h1>
+      <h3>Test your metric conversion skills!</h3>
+      <div style="text-align:center; margin-top:50px;">
+        <button class="btn" id="start-button">Start Game</button>
+      </div>
+      <div id="loading-message" style="text-align:center; margin-top:20px; color:#555;">
+        Loading questions...
+      </div>
+    </div>
+
+    <!-- Question Screen -->
+    <div id="question-screen">
+      <h2>Level <span id="level-label">1</span></h2>
+      <div class="progress-container">
+        <div id="progress-bar" class="progress-bar"></div>
+      </div>
+      <div id="question-text"></div>
+      <div id="hint-box"></div>
+      <div id="choices-container"></div>
+      <div style="text-align:center;">
+        <button class="btn" id="hint-button">Hint</button>
+        <button class="btn" id="check-button">Check</button>
+      </div>
+      <div id="scoreboard">Correct: 0 / Attempts: 0</div>
+    </div>
+
+    <!-- Final Screen -->
+    <div id="final-screen">
+      <h1>All Done!</h1>
+      <h3 id="final-message"></h3>
+      <div style="text-align:center; margin-top:50px;">
+        <button class="btn" id="restart-button">Play Again</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Fallback questions for GitHub Pages -->
+  <script type="application/json" id="fallback-questions">[
+      {
+        "id": "Q1",
+        "level": 1,
+        "questionType": "typeIn",
+        "question": "Convert 5 cm to mm",
+        "correctAnswer": "50",
+        "choices": [],
+        "hint": "Remember: 1 cm = 10 mm"
+      },
+      {
+        "id": "Q2",
+        "level": 1,
+        "questionType": "multipleChoice",
+        "question": "Which is larger: 2 dm or 20 cm?",
+        "correctAnswer": "They are equal",
+        "choices": ["2 dm is larger", "They are equal", "20 cm is larger"],
+        "hint": "Hint: 1 dm = 10 cm"
+      },
+      {
+        "id": "Q3",
+        "level": 1,
+        "questionType": "typeIn",
+        "question": "Convert 30 mm to cm",
+        "correctAnswer": "3",
+        "choices": [],
+        "hint": "Remember: 10 mm = 1 cm"
+      },
+      {
+        "id": "Q4",
+        "level": 1,
+        "questionType": "multipleChoice",
+        "question": "How many mm are in 9 cm?",
+        "correctAnswer": "90",
+        "choices": ["900", "9", "90", "0.9"],
+        "hint": "Multiply by 10"
+      },
+      {
+        "id": "Q5",
+        "level": 1,
+        "questionType": "typeIn",
+        "question": "Convert 1 dm to cm",
+        "correctAnswer": "10",
+        "choices": [],
+        "hint": "1 dm = 10 cm"
+      },
+      {
+        "id": "Q16",
+        "level": 2,
+        "questionType": "typeIn",
+        "question": "Convert 2 m to cm",
+        "correctAnswer": "200",
+        "choices": [],
+        "hint": "1 m = 100 cm"
+      },
+      {
+        "id": "Q17",
+        "level": 2,
+        "questionType": "multipleChoice",
+        "question": "How many m are in 350 cm?",
+        "correctAnswer": "3.5",
+        "choices": ["35", "3.5", "0.35"],
+        "hint": "Divide by 100"
+      },
+      {
+        "id": "Q31",
+        "level": 3,
+        "questionType": "typeIn",
+        "question": "Convert 20 m to dam",
+        "correctAnswer": "2",
+        "choices": [],
+        "hint": "1 dam = 10 m"
+      },
+      {
+        "id": "Q61",
+        "level": 5,
+        "questionType": "typeIn",
+        "question": "Convert 3000 m to km",
+        "correctAnswer": "3",
+        "choices": [],
+        "hint": "1 km = 1000 m"
+      }
+  ]</script>
+
+  <!-- Reference the external JavaScript file -->
+  <script>
+    // Simple version of the application that will work even if full script doesn't load
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log("DOM loaded - simple version active");
+      
+      // Add a troubleshooting function to window
+      window.troubleshoot = function() {
+        // Load the embedded questions directly
+        try {
+          const fallbackElement = document.getElementById('fallback-questions');
+          if (fallbackElement) {
+            window.questionBank = JSON.parse(fallbackElement.textContent);
+            console.log("Manually loaded", window.questionBank.length, "questions");
+            alert("Loaded " + window.questionBank.length + " questions manually");
+          } else {
+            alert("No fallback questions element found");
+          }
+        } catch(e) {
+          console.error("Troubleshooting error:", e);
+          alert("Error during troubleshooting: " + e.message);
+        }
+      };
+      
+      // Add a check script button for debugging
+      const loadingMsg = document.getElementById('loading-message');
+      if (loadingMsg) {
+        const troubleBtn = document.createElement('button');
+        troubleBtn.textContent = "Troubleshoot";
+        troubleBtn.className = "btn";
+        troubleBtn.style.marginTop = "10px";
+        troubleBtn.style.backgroundColor = "#999";
+        troubleBtn.onclick = window.troubleshoot;
+        loadingMsg.appendChild(document.createElement('br'));
+        loadingMsg.appendChild(troubleBtn);
+      }
+      
+      // Create a simple game version as fallback
+      if (!window.startGame) {
+        console.log("Creating fallback game functions");
+        const titleScreen = document.getElementById('title-screen');
+        const questionScreen = document.getElementById('question-screen');
+        const startButton = document.getElementById('start-button');
+        const questionText = document.getElementById('question-text');
+        const choicesContainer = document.getElementById('choices-container');
+        const checkButton = document.getElementById('check-button');
+        
+        // Create minimal game functionality
+        window.questionBank = JSON.parse(document.getElementById('fallback-questions').textContent);
+        window.currentIndex = 0;
+        
+        startButton.addEventListener('click', function() {
+          titleScreen.classList.remove('active');
+          questionScreen.classList.add('active');
+          
+          // Show first question
+          const q = window.questionBank[0];
+          questionText.textContent = q.question;
+          
+          if (q.questionType === 'multipleChoice') {
+            q.choices.forEach(choice => {
+              const label = document.createElement('label');
+              const radio = document.createElement('input');
+              radio.type = 'radio';
+              radio.name = 'mc';
+              radio.value = choice;
+              label.appendChild(radio);
+              label.appendChild(document.createTextNode(' ' + choice));
+              choicesContainer.appendChild(label);
+            });
+          } else {
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.id = 'answer-input';
+            choicesContainer.appendChild(input);
+          }
+        });
+      }
+    });
+  </script>
+  <script src="script.js"></script>
+</body>
+</html>
