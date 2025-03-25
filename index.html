@@ -48,7 +48,22 @@
     <div id="title-screen" class="active">
       <h1>308 Measurement Conversions</h1>
       <h3>Test your metric conversion skills!</h3>
-      <div style="text-align:center; margin-top:50px;">
+      <div style="text-align:center; margin-top:30px;">
+        <div>
+          <label for="level-select" style="display:block; margin-bottom:10px; font-weight:bold;">Select starting level:</label>
+          <select id="level-select" style="font-size:16px; padding:5px; margin-bottom:20px; width:100px;">
+            <option value="1">Level 1</option>
+            <option value="2">Level 2</option>
+            <option value="3">Level 3</option>
+            <option value="4">Level 4</option>
+            <option value="5">Level 5</option>
+            <option value="6">Level 6</option>
+            <option value="7">Level 7</option>
+            <option value="8">Level 8</option>
+            <option value="9">Level 9</option>
+            <option value="10">Level 10</option>
+          </select>
+        </div>
         <button class="btn" id="start-button">Start Game</button>
       </div>
       <div id="loading-message" style="text-align:center; margin-top:20px; color:#555;">
@@ -68,6 +83,7 @@
       <div style="text-align:center;">
         <button class="btn" id="hint-button">Hint</button>
         <button class="btn" id="check-button">Check</button>
+        <button class="btn" id="end-game-button" style="background-color:#f44336; margin-top:15px;">End Game</button>
       </div>
       <div id="scoreboard">Correct: 0 / Attempts: 0</div>
     </div>
